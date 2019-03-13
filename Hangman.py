@@ -1,3 +1,5 @@
+# Pygame based on https://github.com/JCLOH98/Hangman-Pygame
+
 import pygame
 import sys
 import random
@@ -33,21 +35,17 @@ Font2 = pygame.font.Font("freesansbold.ttf", 20)
 Display.fill(WHITE)
 
 
-def randomNum(choice):
-    RandomNum = 0
+def random_number(choice):
+    random_num = 0
     if choice == 1:
-        RandomNum == random.randint(0, len(Easy) - 1)
-
+        random_num = random.randint(0, len(Easy) - 1)
     elif choice == 2:
-        RandomNum = random.randint(0, len(Medium) - 1)
-
+        random_num = random.randint(0, len(Medium) - 1)
     elif choice == 3:
-        RandomNum = random.randint(0, len(Hard) - 1)
-
+        random_num = random.randint(0, len(Hard) - 1)
     elif choice == 4:
-        RandomNum = random.randint(0, len(Color) - 1)  # as elements of color is 0,1,2,3,4
-
-    return RandomNum
+        random_num = random.randint(0, len(Color) - 1)  # as elements of color is 0,1,2,3,4
+    return random_num
 
 
 def List(number, choice):
@@ -237,7 +235,7 @@ def main():
         pygame.time.Clock().tick(30)  # 30fps
 
     # This is to make sure the word and random number is constant
-    TheNum = randomNum(TheChoice)
+    TheNum = random_number(TheChoice)
     TheWord = List(TheNum, TheChoice)
     # TheWord = "wew"
 
