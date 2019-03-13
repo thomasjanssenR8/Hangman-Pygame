@@ -8,6 +8,9 @@ import re
 
 from pygame.locals import *
 
+pygame.init()
+pygame.display.set_caption("Hangman")
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -17,154 +20,129 @@ GREY = (200, 200, 200)
 LEFT_CLICK = (1, 0, 0)
 RIGHT_CLICK = (0, 0, 1)
 
-pygame.init()
-pygame.display.set_caption("Hangman")
-
 # 32 bit display
-Display = pygame.display.set_mode((500, 500), 0, 32)
+display = pygame.display.set_mode((500, 500), 0, 32)
+display.fill(WHITE)
 
 # TODO randomize words from dictionary
-Easy = ["BELL", "STAR", "PICNIC", "PIE", "HAT", "HEART", "FLAG"]
-Medium = ["CARPET", "POPCORN", "SEAFOOD", "DOORBELL", "COWBOY", "INSIDE", "OUTSIDE", "RAINBOW", "POSTMAN", "WATERMELON", "FOOTBALL", "STRAWBERRY"]
-Hard = ["BACKGROUND", "BOOKWORM", "FIREFIGHTER", "SOUNDPROOF", "THUNDERSTORM", "CAMPGROUND", "FRIENDSHIP", "SKYSCRAPER", "SUPERHUMAN", "FINGERPRINT", "MASTERPIECE", "LOUDSPEAKER"]
+easy = ["BELL", "STAR", "PICNIC", "PIE", "HAT", "HEART", "FLAG"]
+medium = ["CARPET", "POPCORN", "SEAFOOD", "DOORBELL", "COWBOY", "INSIDE", "OUTSIDE", "RAINBOW", "POSTMAN", "WATERMELON",
+          "FOOTBALL", "STRAWBERRY"]
+hard = ["BACKGROUND", "BOOKWORM", "FIREFIGHTER", "SOUNDPROOF", "THUNDERSTORM", "CAMPGROUND", "FRIENDSHIP", "SKYSCRAPER",
+        "SUPERHUMAN", "FINGERPRINT", "MASTERPIECE", "LOUDSPEAKER"]
 Color = ["BLACK", "WHITE", "RED", "GREEN", "BLUE", "GREY"]
 
 Font = pygame.font.Font("freesansbold.ttf", 33)
 Font2 = pygame.font.Font("freesansbold.ttf", 20)
 
-Display.fill(WHITE)
-
 
 def random_number(choice):
     random_num = 0
     if choice == 1:
-        random_num = random.randint(0, len(Easy) - 1)
+        random_num = random.randint(0, len(easy) - 1)
     elif choice == 2:
-        random_num = random.randint(0, len(Medium) - 1)
+        random_num = random.randint(0, len(medium) - 1)
     elif choice == 3:
-        random_num = random.randint(0, len(Hard) - 1)
+        random_num = random.randint(0, len(hard) - 1)
     elif choice == 4:
         random_num = random.randint(0, len(Color) - 1)  # as elements of color is 0,1,2,3,4
     return random_num
 
 
-def List(number, choice):
+def pick_from_list(number, choice):
+    word = None
     if choice == 1:
-        Word = Easy[number]
-
+        word = easy[number]
     elif choice == 2:
-        Word = Medium[number]
-
+        word = medium[number]
     elif choice == 3:
-        Word = Hard[number]
-
+        word = hard[number]
     elif choice == 4:
-        Word = Color[number]
-
-    return Word
+        word = Color[number]
+    return word
 
 
 def Hangman(condition):
-    if (condition == 0):
-        pygame.draw.line(Display, GREY, (10, 400), (300, 400), 8)  # baseline
-        pygame.draw.line(Display, GREY, (50, 50), (50, 400), 8)  # stick1
-        pygame.draw.line(Display, GREY, (50, 60), (250, 60), 8)  # stick2
-        pygame.draw.line(Display, GREY, (150, 60), (150, 100), 8)  # rope
-        pygame.draw.circle(Display, GREY, (150, 150), 50, 8)  # head
-        pygame.draw.line(Display, GREY, (150, 200), (150, 300), 8)  # body
-        pygame.draw.line(Display, GREY, (150, 210), (100, 250), 8)  # lefthand
-        pygame.draw.line(Display, GREY, (150, 210), (200, 250), 8)  # righthand
-        pygame.draw.line(Display, GREY, (150, 300), (100, 350), 8)  # leftleg
-        pygame.draw.line(Display, GREY, (150, 300), (200, 350), 8)  # rightleg
+    if condition == 0:
+        pygame.draw.line(display, GREY, (10, 400), (300, 400), 8)  # baseline
+        pygame.draw.line(display, GREY, (50, 50), (50, 400), 8)  # stick1
+        pygame.draw.line(display, GREY, (50, 60), (250, 60), 8)  # stick2
+        pygame.draw.line(display, GREY, (150, 60), (150, 100), 8)  # rope
+        pygame.draw.circle(display, GREY, (150, 150), 50, 8)  # head
+        pygame.draw.line(display, GREY, (150, 200), (150, 300), 8)  # body
+        pygame.draw.line(display, GREY, (150, 210), (100, 250), 8)  # lefthand
+        pygame.draw.line(display, GREY, (150, 210), (200, 250), 8)  # righthand
+        pygame.draw.line(display, GREY, (150, 300), (100, 350), 8)  # leftleg
+        pygame.draw.line(display, GREY, (150, 300), (200, 350), 8)  # rightleg
 
-    elif (condition == 1):
-        pygame.draw.line(Display, BLACK, (10, 400), (300, 400), 8)  # baseline
-
-    elif (condition == 2):
-        pygame.draw.line(Display, BLACK, (50, 50), (50, 400), 8)  # stick1
-
-    elif (condition == 3):
-        pygame.draw.line(Display, BLACK, (50, 60), (250, 60), 8)  # stick2
-
-    elif (condition == 4):
-        pygame.draw.line(Display, BLACK, (150, 60), (150, 100), 8)  # rope
-
-    elif (condition == 5):
-        pygame.draw.circle(Display, BLACK, (150, 150), 50, 8)  # head
-
-    elif (condition == 6):
-        pygame.draw.line(Display, BLACK, (150, 200), (150, 300), 8)  # body
-
-    elif (condition == 7):
-        pygame.draw.line(Display, BLACK, (150, 210), (100, 250), 8)  # lefthand
-
-    elif (condition == 8):
-        pygame.draw.line(Display, BLACK, (150, 210), (200, 250), 8)  # righthand
-
-    elif (condition == 9):
-        pygame.draw.line(Display, BLACK, (150, 300), (100, 350), 8)  # leftleg
-
-    elif (condition == 10):
-        pygame.draw.line(Display, BLACK, (150, 300), (200, 350), 8)  # rightleg
-
-    # game over
-    elif (condition == 11):
-        pygame.draw.line(Display, BLUE, (10, 400), (300, 400), 8)  # baseline
-        pygame.draw.line(Display, BLUE, (50, 50), (50, 400), 8)  # stick1
-        pygame.draw.line(Display, BLUE, (50, 60), (250, 60), 8)  # stick2
-        pygame.draw.line(Display, BLUE, (150, 60), (150, 100), 8)  # rope
-        pygame.draw.circle(Display, BLUE, (150, 150), 50, 8)  # head
-        pygame.draw.line(Display, BLUE, (150, 200), (150, 300), 8)  # body
-        pygame.draw.line(Display, BLUE, (150, 210), (100, 250), 8)  # lefthand
-        pygame.draw.line(Display, BLUE, (150, 210), (200, 250), 8)  # righthand
-        pygame.draw.line(Display, BLUE, (150, 300), (100, 350), 8)  # leftleg
-        pygame.draw.line(Display, BLUE, (150, 300), (200, 350), 8)  # rightleg
+    elif condition == 1:
+        pygame.draw.line(display, BLACK, (10, 400), (300, 400), 8)  # baseline
+    elif condition == 2:
+        pygame.draw.line(display, BLACK, (50, 50), (50, 400), 8)  # stick1
+    elif condition == 3:
+        pygame.draw.line(display, BLACK, (50, 60), (250, 60), 8)  # stick2
+    elif condition == 4:
+        pygame.draw.line(display, BLACK, (150, 60), (150, 100), 8)  # rope
+    elif condition == 5:
+        pygame.draw.circle(display, BLACK, (150, 150), 50, 8)  # head
+    elif condition == 6:
+        pygame.draw.line(display, BLACK, (150, 200), (150, 300), 8)  # body
+    elif condition == 7:
+        pygame.draw.line(display, BLACK, (150, 210), (100, 250), 8)  # lefthand
+    elif condition == 8:
+        pygame.draw.line(display, BLACK, (150, 210), (200, 250), 8)  # righthand
+    elif condition == 9:
+        pygame.draw.line(display, BLACK, (150, 300), (100, 350), 8)  # leftleg
+    elif condition == 10:
+        pygame.draw.line(display, BLACK, (150, 300), (200, 350), 8)  # rightleg
+    elif condition == 11:  # GAME OVER
+        pygame.draw.line(display, BLUE, (10, 400), (300, 400), 8)  # baseline
+        pygame.draw.line(display, BLUE, (50, 50), (50, 400), 8)  # stick1
+        pygame.draw.line(display, BLUE, (50, 60), (250, 60), 8)  # stick2
+        pygame.draw.line(display, BLUE, (150, 60), (150, 100), 8)  # rope
+        pygame.draw.circle(display, BLUE, (150, 150), 50, 8)  # head
+        pygame.draw.line(display, BLUE, (150, 200), (150, 300), 8)  # body
+        pygame.draw.line(display, BLUE, (150, 210), (100, 250), 8)  # lefthand
+        pygame.draw.line(display, BLUE, (150, 210), (200, 250), 8)  # righthand
+        pygame.draw.line(display, BLUE, (150, 300), (100, 350), 8)  # leftleg
+        pygame.draw.line(display, BLUE, (150, 300), (200, 350), 8)  # rightleg
 
 
 def PreHangMan():
-    pygame.draw.line(Display, GREEN, (10, 400), (190, 400), 8)  # baseline
-    pygame.draw.line(Display, GREEN, (30, 90), (30, 400), 8)  # stick1
-    pygame.draw.line(Display, GREEN, (30, 100), (160, 100), 8)  # stick2
-    pygame.draw.line(Display, GREEN, (100, 100), (100, 120), 8)  # rope
-    pygame.draw.circle(Display, GREEN, (100, 170), 50, 8)  # head
-    pygame.draw.line(Display, GREEN, (100, 220), (100, 320), 8)  # body
-    pygame.draw.line(Display, GREEN, (100, 230), (50, 270), 8)  # lefthand
-    pygame.draw.line(Display, GREEN, (100, 230), (150, 270), 8)  # righthand
-    pygame.draw.line(Display, GREEN, (100, 320), (50, 360), 8)  # leftleg
-    pygame.draw.line(Display, GREEN, (100, 320), (150, 360), 8)  # rightleg
+    pygame.draw.line(display, GREEN, (10, 400), (190, 400), 8)  # baseline
+    pygame.draw.line(display, GREEN, (30, 90), (30, 400), 8)  # stick1
+    pygame.draw.line(display, GREEN, (30, 100), (160, 100), 8)  # stick2
+    pygame.draw.line(display, GREEN, (100, 100), (100, 120), 8)  # rope
+    pygame.draw.circle(display, GREEN, (100, 170), 50, 8)  # head
+    pygame.draw.line(display, GREEN, (100, 220), (100, 320), 8)  # body
+    pygame.draw.line(display, GREEN, (100, 230), (50, 270), 8)  # lefthand
+    pygame.draw.line(display, GREEN, (100, 230), (150, 270), 8)  # righthand
+    pygame.draw.line(display, GREEN, (100, 320), (50, 360), 8)  # leftleg
+    pygame.draw.line(display, GREEN, (100, 320), (150, 360), 8)  # rightleg
 
 
 def StartScreen():
-    Display.blit(pygame.font.Font("freesansbold.ttf", 40).render("HANGMAN", True, BLACK), (20, 20))
-    Display.blit(Font2.render("by JCLOH", True, BLACK), (60, 60))
-    Display.blit(Font.render("Level Difficulty", True, BLACK), (200, 150))
-    Display.blit(Font2.render("1-Easy", True, BLACK), (200, 200))
-    Display.blit(Font2.render("2-Medium", True, BLACK), (200, 250))
-    Display.blit(Font2.render("3-Hard", True, BLACK), (200, 300))
-    Display.blit(Font2.render("4-Color", True, GREY), (200, 350))
+    display.blit(pygame.font.Font("freesansbold.ttf", 40).render("HANGMAN", True, BLACK), (20, 20))
+    display.blit(Font2.render("by JCLOH", True, BLACK), (60, 60))
+    display.blit(Font.render("Level Difficulty", True, BLACK), (200, 150))
+    display.blit(Font2.render("1-Easy", True, BLACK), (200, 200))
+    display.blit(Font2.render("2-Medium", True, BLACK), (200, 250))
+    display.blit(Font2.render("3-Hard", True, BLACK), (200, 300))
+    display.blit(Font2.render("4-Color", True, GREY), (200, 350))
 
 
 def main():
-    BLACK = (0, 0, 0)
-    WHITE = (255, 255, 255)
-    RED = (255, 0, 0)
-    GREEN = (0, 255, 0)
-    BLUE = (0, 0, 255)
-
-    GREY = (200, 200, 200)
-
-    TheChoice = 0
+    the_choice = 0
 
     StartScreen()
-
     PreHangMan()
 
     # background music
     pygame.mixer.music.load('Music/KM/Two_Finger_Johnny.mp3')
     pygame.mixer.music.play(-1, 0)
 
-    FirstCondi = True
-    while FirstCondi:
+    in_menu = True
+    while in_menu:
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -172,119 +150,94 @@ def main():
                 sys.exit()
 
             elif event.type == KEYDOWN:
-                # print(FirstCondi)
-                if (event.key == K_1) or (event.key == 257):  # 257 is 1 in numpad
-                    TheChoice = 1
-                    FirstCondi = False
+                # print(in_menu)
+                if event.key == K_1 or event.key == 257:  # 257 is 1 in numpad
+                    the_choice = 1
+                    in_menu = False
                     break
                 elif event.key == K_2 or event.key == 258:  # 258 is 2 in numpad
-                    TheChoice = 2
-                    FirstCondi = False
+                    the_choice = 2
+                    in_menu = False
                     break
                 elif event.key == K_3 or event.key == 259:  # 259 is 3 in numpad
-                    TheChoice = 3
-                    FirstCondi = False
+                    the_choice = 3
+                    in_menu = False
                     break
                 elif event.key == K_4 or event.key == 260:  # 260 is 4 in numpad
-                    TheChoice = 4
-                    FirstCondi = False
+                    the_choice = 4
+                    in_menu = False
                     break
 
             elif event.type == MOUSEBUTTONDOWN:
                 # print(pygame.mouse.get_pressed())
-                if (pygame.mouse.get_pressed() != (0, 0, 0)):  # Scroller of mouse
+                if pygame.mouse.get_pressed() != (0, 0, 0):  # Scroller of mouse
                     pygame.mixer.Sound('Music/Mouse_Click_Fast.wav').play()
 
                 # Easy
-                if (pygame.mouse.get_pos()[0] > 200 and \
-                        pygame.mouse.get_pos()[1] > 200 and \
-                        pygame.mouse.get_pos()[0] < 265 and \
-                        pygame.mouse.get_pos()[1] < 215):
-                    TheChoice = 1
-                    FirstCondi = False
+                if 200 < pygame.mouse.get_pos()[0] < 265 and 200 < pygame.mouse.get_pos()[1] < 215:
+                    the_choice = 1
+                    in_menu = False
                     break
                 # Medium
-                elif (pygame.mouse.get_pos()[0] > 200 and \
-                      pygame.mouse.get_pos()[1] > 250 and \
-                      pygame.mouse.get_pos()[0] < 295 and \
-                      pygame.mouse.get_pos()[1] < 265):
-                    TheChoice = 2
-                    FirstCondi = False
+                elif 200 < pygame.mouse.get_pos()[0] < 295 and 250 < pygame.mouse.get_pos()[1] < 265:
+                    the_choice = 2
+                    in_menu = False
                     break
                 # Hard
-                elif (pygame.mouse.get_pos()[0] > 200 and \
-                      pygame.mouse.get_pos()[1] > 300 and \
-                      pygame.mouse.get_pos()[0] < 265 and \
-                      pygame.mouse.get_pos()[1] < 315):
-                    TheChoice = 3
-                    FirstCondi = False
+                elif 200 < pygame.mouse.get_pos()[0] < 265 and 300 < pygame.mouse.get_pos()[1] < 315:
+                    the_choice = 3
+                    in_menu = False
                     break
                 # Color
-                elif (pygame.mouse.get_pos()[0] > 200 and \
-                      pygame.mouse.get_pos()[1] > 350 and \
-                      pygame.mouse.get_pos()[0] < 270 and \
-                      pygame.mouse.get_pos()[1] < 365):
-                    TheChoice = 4
-                    FirstCondi = False
+                elif 200 < pygame.mouse.get_pos()[0] < 270 and 350 < pygame.mouse.get_pos()[1] < 365:
+                    the_choice = 4
+                    in_menu = False
                     break
 
-        if (TheChoice != 0):
-            Display.fill(WHITE)
+        if the_choice != 0:
+            display.fill(WHITE)
 
         pygame.display.update()
         pygame.time.Clock().tick(30)  # 30fps
 
     # This is to make sure the word and random number is constant
-    TheNum = random_number(TheChoice)
-    TheWord = List(TheNum, TheChoice)
-    # TheWord = "wew"
+    the_num = random_number(the_choice)
+    the_word = pick_from_list(the_num, the_choice)
+    print(the_word)
 
-    # This is to check if it got the word from the list
-    print(TheWord)
+    empty_list = []
+    for i in range(len(the_word)):
+        empty_list.append('-')
 
-    EmptyList = []
+    hidden = Font.render("".join(empty_list), True, BLACK)
+    hidden_rect = hidden.get_rect()
+    hidden_rect.center = (350, 250)
+    display.blit(hidden, hidden_rect)
 
-    for i in range(len(TheWord)):
-        EmptyList.append('-')
+    condition = 0  # if condition is 10, then end game
+    off = 0  # quit game at game over and congrats
 
-    # print(EmptyList)
-    # print("".join(EmptyList))
+    the_time = 0
+    start = time.time()  # current time
 
-    Hidden = Font.render("".join(EmptyList), True, BLACK)
-    HiddenRect = Hidden.get_rect()
-    HiddenRect.center = (350, 250)
-    Display.blit(Hidden, HiddenRect)
+    display.blit(Font2.render("Time(s):", True, BLACK), (300, 10))
 
-    Condition = 0;  # if condition is 10, then end game
+    last_key_pressed = ""
 
-    Off = 0  # quit game at game over and congrats
-
-    TheTime = 0
-    Start = time.time()  # current time
-
-    Display.blit(Font2.render("Time(s):", True, BLACK), (300, 10))
-
-    LastKeyPressed = ""
-
-    Display.blit(pygame.font.Font("freesansbold.ttf", 15).render("Press 0 to quit game", True, BLACK), (20, 10))
+    display.blit(pygame.font.Font("freesansbold.ttf", 15).render("Press 0 to quit game", True, BLACK), (20, 10))
 
     while True:
-        Hangman(Condition)
-        End = time.time()  # end time
-        if (int(End) - int(Start) == 1):
-            pygame.draw.rect(Display, WHITE, (385, 0, 100, 50))  # hide time
-            TheTime = TheTime + 1
-            # print(TheTime, 'seconds has passed')
-            Timer = Font2.render(str(TheTime), True, BLACK)
-            Display.blit(Timer, (400, 10))
-            Start = time.time()
+        Hangman(condition)
+        end = time.time()  # end time
+        if int(end) - int(start) == 1:
+            pygame.draw.rect(display, WHITE, (385, 0, 100, 50))  # hide time
+            the_time = the_time + 1
+            # print(the_time, 'seconds has passed')
+            timer = Font2.render(str(the_time), True, BLACK)
+            display.blit(timer, (400, 10))
+            start = time.time()
 
         for event in pygame.event.get():
-
-            # mouse
-            # print(pygame.mouse.get_pos())
-            # print(pygame.mouse.get_pressed())
-
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
@@ -293,114 +246,99 @@ def main():
                 pygame.mixer.Sound('Music/Keyboard.wav').play()
 
                 # if exit key is pressed
-                LastKeyPressed = event.key
-                pygame.draw.rect(Display, WHITE, (220, 200, 280, 100))  # hide word
-                pygame.draw.rect(Display, WHITE, (260, 50, 200, 100))  # hide invalid input
-                UserInput = event.key
-                # print(chr(event.key))
+                last_key_pressed = event.key
+                pygame.draw.rect(display, WHITE, (220, 200, 280, 100))  # hide word
+                pygame.draw.rect(display, WHITE, (260, 50, 200, 100))  # hide invalid input
+
                 # This is use to check if it changes the ASCII int value to the char
                 if re.search("[a-z]", chr(event.key)):
-                    if ((chr(event.key).upper() in TheWord) or (chr(event.key).lower() in TheWord)):
-                        for i in range(len(TheWord)):
-                            if ((TheWord[i] == (chr(event.key)).upper()) or (TheWord[i] == (chr(event.key)).lower())):
-                                EmptyList[i] = TheWord[i]
+                    if (chr(event.key).upper() in the_word) or (chr(event.key).lower() in the_word):  # letter in word
+                        for i in range(len(the_word)):
+                            if (the_word[i] == (chr(event.key)).upper()) or (the_word[i] == (chr(event.key)).lower()):
+                                empty_list[i] = the_word[i]
 
                     else:
-                        Condition = Condition + 1
+                        condition = condition + 1  # letter not in word
 
-                    Hidden = Font.render("".join(EmptyList), True, BLACK)
-                    HiddenRect = Hidden.get_rect()
-                    HiddenRect.center = (350, 250)
-                    Display.blit(Hidden, HiddenRect)
+                    hidden = Font.render("".join(empty_list), True, BLACK)
+                    hidden_rect = hidden.get_rect()
+                    hidden_rect.center = (350, 250)
+                    display.blit(hidden, hidden_rect)
 
                 else:
-                    if (event.key == K_0 or event.key == 256):  # 256 is 0 in numpad
-                        Display.blit(Font.render("EXIT?", True, RED), (340, 220))
-                        Display.blit(Font2.render("Yes", True, BLUE), (340, 270))
-                        Display.blit(Font2.render("No", True, BLUE), (415, 270))
+                    if event.key == K_0 or event.key == 256:  # 256 is 0 in numpad
+                        display.blit(Font.render("EXIT?", True, RED), (340, 220))
+                        display.blit(Font2.render("Yes", True, BLUE), (340, 270))
+                        display.blit(Font2.render("No", True, BLUE), (415, 270))
                     else:
-                        Input = Font2.render("INVALID INPUT!!!", True, RED)
-                        InputRect = Input.get_rect()
-                        InputRect.center = (350, 100)
-                        Display.blit(Input, InputRect)
-                        Display.blit(Hidden, HiddenRect)
+                        input = Font2.render("INVALID INPUT!!!", True, RED)
+                        input_rect = input.get_rect()
+                        input_rect.center = (350, 100)
+                        display.blit(input, input_rect)
+                        display.blit(hidden, hidden_rect)
 
             elif event.type == KEYUP:
-                pygame.draw.rect(Display, WHITE, (260, 50, 200, 100))  # hide invalid input
+                pygame.draw.rect(display, WHITE, (260, 50, 200, 100))  # hide invalid input
 
             elif event.type == MOUSEBUTTONDOWN:
                 # print("mouse pressed")
                 # print(pygame.mouse.get_pressed())
-                if (pygame.mouse.get_pressed() != (0, 0, 0)):  # Scroller of mouse
+                if pygame.mouse.get_pressed() != (0, 0, 0):  # Scroller of mouse
                     pygame.mixer.Sound('Music/Mouse_Click_Fast.wav').play()
 
-                if (LastKeyPressed == K_0 or LastKeyPressed == 256):  # 256 is 0 in numpad
-                    if (pygame.mouse.get_pressed() == LEFT_CLICK):
+                if last_key_pressed == K_0 or last_key_pressed == 256:  # 256 is 0 in numpad
+                    if pygame.mouse.get_pressed() == LEFT_CLICK:
                         # Yes
-                        if (pygame.mouse.get_pos()[0] > 340 and \
-                                pygame.mouse.get_pos()[1] > 270 and \
-                                pygame.mouse.get_pos()[0] < 385 and \
-                                pygame.mouse.get_pos()[1] < 285):
-                            pygame.draw.rect(Display, WHITE, (340, 270, 35, 25))  # hide yes
-                            Display.blit(Font2.render("Yes", True, GREEN), (340, 270))
+                        if 340 < pygame.mouse.get_pos()[0] < 385 and 270 < pygame.mouse.get_pos()[1] < 285:
+                            pygame.draw.rect(display, WHITE, (340, 270, 35, 25))  # hide yes
+                            display.blit(Font2.render("Yes", True, GREEN), (340, 270))
                             # print(pygame.mouse.get_pos())
                             print("YES")
 
                         # NO
-                        elif (pygame.mouse.get_pos()[0] > 415 and \
-                              pygame.mouse.get_pos()[1] > 270 and \
-                              pygame.mouse.get_pos()[0] < 450 and \
-                              pygame.mouse.get_pos()[1] < 285):
-                            pygame.draw.rect(Display, WHITE, (415, 270, 35, 25))  # hide no
-                            Display.blit(Font2.render("No", True, GREEN), (415, 270))
+                        elif 415 < pygame.mouse.get_pos()[0] < 450 and 270 < pygame.mouse.get_pos()[1] < 285:
+                            pygame.draw.rect(display, WHITE, (415, 270, 35, 25))  # hide no
+                            display.blit(Font2.render("No", True, GREEN), (415, 270))
                             # print(pygame.mouse.get_pos())
                             print("NO")
 
-
             elif event.type == MOUSEBUTTONUP:  # Yes
-                if (LastKeyPressed == K_0 or LastKeyPressed == 256):  # 256 is 0 in numpad
+                if last_key_pressed == K_0 or last_key_pressed == 256:  # 256 is 0 in numpad
                     # Yes
-                    if (pygame.mouse.get_pos()[0] > 340 and \
-                            pygame.mouse.get_pos()[1] > 270 and \
-                            pygame.mouse.get_pos()[0] < 385 and \
-                            pygame.mouse.get_pos()[1] < 285):
+                    if 340 < pygame.mouse.get_pos()[0] < 385 and 270 < pygame.mouse.get_pos()[1] < 285:
 
                         # quit game
                         pygame.quit()
                         sys.exit()
 
                     # No
-                    elif (pygame.mouse.get_pos()[0] > 415 and \
-                          pygame.mouse.get_pos()[1] > 270 and \
-                          pygame.mouse.get_pos()[0] < 450 and \
-                          pygame.mouse.get_pos()[1] < 285):
-                        pygame.draw.rect(Display, WHITE, (415, 270, 35, 25))  # hide no
-                        Display.blit(Font2.render("No", True, GREEN), (415, 270))
-                        pygame.draw.rect(Display, WHITE, (300, 200, 200, 100))  # hide exit, yes,no
+                    elif 415 < pygame.mouse.get_pos()[0] < 450 and 270 < pygame.mouse.get_pos()[1] < 285:
+                        pygame.draw.rect(display, WHITE, (415, 270, 35, 25))  # hide no
+                        display.blit(Font2.render("No", True, GREEN), (415, 270))
+                        pygame.draw.rect(display, WHITE, (300, 200, 200, 100))  # hide exit, yes,no
 
-                        Hidden = Font.render("".join(EmptyList), True, BLACK)
-                        HiddenRect = Hidden.get_rect()
-                        HiddenRect.center = (400, 250)
-                        Display.blit(Hidden, HiddenRect)
+                        hidden = Font.render("".join(empty_list), True, BLACK)
+                        hidden_rect = hidden.get_rect()
+                        hidden_rect.center = (400, 250)
+                        display.blit(hidden, hidden_rect)
 
-                        LastKeyPressed = ""
-
+                        last_key_pressed = ""
 
                     else:
-                        pygame.draw.rect(Display, WHITE, (340, 270, 35, 25))  # hide yes
-                        Display.blit(Font2.render("Yes", True, BLUE), (340, 270))
-                        pygame.draw.rect(Display, WHITE, (415, 270, 35, 25))  # hide no
-                        Display.blit(Font2.render("No", True, BLUE), (415, 270))
+                        pygame.draw.rect(display, WHITE, (340, 270, 35, 25))  # hide yes
+                        display.blit(Font2.render("Yes", True, BLUE), (340, 270))
+                        pygame.draw.rect(display, WHITE, (415, 270, 35, 25))  # hide no
+                        display.blit(Font2.render("No", True, BLUE), (415, 270))
 
         # Check if the word is word and the condition
-        if (Condition == 10):
-            Display.fill(WHITE)
-            Hangman(Condition + 1)
+        if condition == 10:
+            display.fill(WHITE)
+            Hangman(condition + 1)
             Over = Font2.render("GAME OVER!!!", True, RED)
             OverRect = Over.get_rect()
             OverRect.center = (400, 250)
-            Display.blit(Over, OverRect)
-            Off = 1
+            display.blit(Over, OverRect)
+            off = 1
 
             # stop the BGM
             pygame.mixer.music.stop()
@@ -408,24 +346,24 @@ def main():
             pygame.mixer.music.load('Music/KM/Loping_Sting.mp3')
             pygame.mixer.music.play(0, 0)
 
-        elif (TheWord == "".join(EmptyList)):
-            Display.fill(WHITE)
+        elif the_word == "".join(empty_list):
+            display.fill(WHITE)
             Cong = Font.render("CONGRATS!!!", True, GREEN)
             CongRect = Cong.get_rect()
             CongRect.center = (250, 220)
-            Display.blit(Cong, CongRect)
+            display.blit(Cong, CongRect)
 
             Word = Font2.render("The word is:", True, BLACK)
             WordRect = Word.get_rect()
             WordRect.center = (250, 250)
-            Display.blit(Word, WordRect)
+            display.blit(Word, WordRect)
 
-            Word2 = Font.render(TheWord, True, BLACK)
+            Word2 = Font.render(the_word, True, BLACK)
             Word2Rect = Word2.get_rect()
             Word2Rect.center = (250, 285)
-            Display.blit(Word2, Word2Rect)
+            display.blit(Word2, Word2Rect)
 
-            Off = 1
+            off = 1
 
             # stop the BGM
             pygame.mixer.music.stop()
@@ -436,7 +374,7 @@ def main():
         pygame.display.update()
         pygame.time.Clock().tick(30)  # 30fps
 
-        if (Off == 1):
+        if off == 1:
             # wait 5 seconds
             time.sleep(5)
             # quit game
